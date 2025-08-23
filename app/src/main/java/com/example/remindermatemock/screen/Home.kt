@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
 
-const val TAG = "Home"
+private const val TAG = "Home"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(modifier: Modifier = Modifier) {
