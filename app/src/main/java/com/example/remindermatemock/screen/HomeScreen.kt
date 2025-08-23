@@ -2,7 +2,6 @@ package com.example.remindermatemock.screen
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,17 +33,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.remindermatemock.model.ReminderViewModel
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
+import com.example.remindermatemock.widget.RemindersWidget
 
 private const val TAG = "Home"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(modifier: Modifier = Modifier) {
+fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
     var presses by remember { mutableIntStateOf(0) }
     var showCompletedToggled by rememberSaveable { mutableStateOf(false) }
+    val reminders by reminderViewModel.reminders.collectAsState()
     Scaffold(
-        modifier,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = topAppBarColors(
@@ -97,30 +99,22 @@ fun Home(modifier: Modifier = Modifier) {
             }
         }
     ) { innerPadding ->
-        Column(
+        RemindersWidget(
+            reminders,
+            onCheckedChange = { reminderId ->
+                // This is the "event flowing up"
+                reminderViewModel.toggleCompletion(reminderId)
+            },
             modifier = Modifier
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text =
-                    """
-                    This is an example of a scaffold. It uses the Scaffold composable's parameters to create a screen with a simple top app bar, bottom app bar, and floating action button.
-
-                    It also contains some basic inner content, such as this text.
-
-                    You have pressed the floating action button $presses times.
-                """.trimIndent(),
-            )
-        }
+                .padding(innerPadding)
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun HomePreview() {
+fun HomeScreenPreview() {
     ReminderMateMockTheme {
-        Home()
+        HomeScreen()
     }
 }
