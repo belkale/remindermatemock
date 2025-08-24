@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.remindermatemock.model.ReminderEvent
 import com.example.remindermatemock.model.ReminderViewModel
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
 import com.example.remindermatemock.widget.HelpDialog
@@ -113,8 +114,8 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                     Text(selectedDate.format(dateFormat))
 
                     IconButton(onClick = {
-                        reminderViewModel.toggleShowCompleted()
                         Log.d(TAG, "showCompletedToggled: $showCompleted")
+                        reminderViewModel.onEvent(ReminderEvent.ShowCompleted)
                     }) {
                         if (showCompleted)
                             Icon(Icons.Filled.Check, contentDescription = "Hide Completed")
@@ -134,7 +135,7 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
             reminders,
             onCheckedChange = { reminderId ->
                 // This is the "event flowing up"
-                reminderViewModel.toggleCompletion(reminderId)
+                reminderViewModel.onEvent(ReminderEvent.MarkCompleted(reminderId))
             },
             modifier = Modifier
                 .padding(innerPadding)
@@ -166,7 +167,7 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                         if (selectedMillis != null) {
                             val date = Instant.fromEpochMilliseconds(selectedMillis)
                                 .toLocalDateTime(TimeZone.currentSystemDefault()).date
-                            reminderViewModel.setDateFilter(date)
+                            reminderViewModel.onEvent(ReminderEvent.SelectDate(date))
                         }
                         showDatePicker = false
                     }
