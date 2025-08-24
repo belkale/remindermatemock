@@ -80,7 +80,7 @@ class ReminderViewModel : ViewModel() {
                     // Create a NEW list with the updated item
                     currentReminders.map { reminder ->
                         if (reminder.id == event.reminderId) {
-                            Log.d(TAG, "Reminder: $event.reminderId toggleCompletion: ${reminder.isCompleted}")
+                            Log.d(TAG, "Reminder: ${event.reminderId} toggleCompletion: ${reminder.isCompleted}")
                             // Use .copy() to create a new object with the isCompleted value flipped
                             reminder.copy(isCompleted = !reminder.isCompleted)
                         } else {
@@ -94,7 +94,7 @@ class ReminderViewModel : ViewModel() {
                     // Create a NEW list with the updated item
                     currentReminders.map { reminder ->
                         if (reminder.id == event.reminderId) {
-                            Log.d(TAG, "Reminder: $event.reminderId toggleCompletion: ${reminder.isCompleted}")
+                            Log.d(TAG, "Reminder: ${event.reminderId} updatedDue: ${event.updatedDue}")
                             // Use .copy() to create a new object with the isCompleted value flipped
                             reminder.copy(due = event.updatedDue)
                         } else {
@@ -105,7 +105,7 @@ class ReminderViewModel : ViewModel() {
             }
             is ReminderEvent.DeleteReminder -> {
                 _reminders.update { currentReminders ->
-                    // Create a NEW list with the updated item
+                    Log.d(TAG, "Reminder: Deleting reminder ${event.reminderId}")
                     currentReminders.filter { reminder -> reminder.id != event.reminderId }
                 }
             }
@@ -114,7 +114,7 @@ class ReminderViewModel : ViewModel() {
             }
             is ReminderEvent.SelectDate -> {
                 Log.d(TAG, "setDateFilter: ${event.date}")
-                _selectedDate.value = event.date
+                _selectedDate.update {  event.date }
             }
 
         }
