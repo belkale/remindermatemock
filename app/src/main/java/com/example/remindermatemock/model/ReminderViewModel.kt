@@ -21,7 +21,6 @@ private const val TAG = "ReminderViewModel"
 
 sealed class ReminderEvent {
     data class AddRecurringReminder(val recurringReminder: RecurringReminder): ReminderEvent()
-    data class UpdateRecurringReminder(val recurringReminder: RecurringReminder): ReminderEvent()
     data class DeleteRecurringReminder(val recurringReminder: RecurringReminder): ReminderEvent()
     data class MarkCompleted(val reminderId: Int): ReminderEvent()
     data class SnoozeReminder(val reminderId: Int, val updatedDue: LocalDateTime): ReminderEvent()
@@ -61,20 +60,40 @@ class ReminderViewModel : ViewModel() {
         loadSampleReminders()
     }
 
+    fun convert(rec: RecurringReminder) = Reminder(rec.id, rec.title,
+        rec.description, rec.recurrences.first().startTime)
+
     // Central function to handle all UI events
     fun onEvent(event: ReminderEvent) {
         when (event) {
             is ReminderEvent.AddRecurringReminder -> {
-                if (event.recurringReminder.title.isNotBlank()) {
-                    val id = if (_reminders.value.isEmpty()) 0 else _reminders.value.last().id + 1
-                    val due = event.recurringReminder.recurrences.first().startTime
-                    val rem = Reminder(id, event.recurringReminder.title,
-                        event.recurringReminder.description, due)
+                val rec = event.recurringReminder
+                if (rec.id == 0) { // Add
+                    val id = if (_reminders.value.isEmpty()) 1 else _reminders.value.last().id + 1
+                    val rem = convert(rec.copy(id))
                     _reminders.update { currentList -> currentList + rem }
+                } else { // Update
+                    _reminders.update { currentReminders ->
+                        // Create a NEW list with the updated item
+                        currentReminders.map { reminder ->
+                            if (reminder.id == rec.id) {
+                                Log.d(TAG, "Updating Reminder: ${reminder.id}")
+                                // Use .copy() to create a new object with the isCompleted value flipped
+                                convert(rec)
+                            } else {
+                                reminder
+                            }
+                        }
+                    }
+                }
+
+            }
+            is ReminderEvent.DeleteRecurringReminder -> {
+                _reminders.update { currentReminders ->
+                    Log.d(TAG, "Reminder: Deleting reminder ${event.recurringReminder.id}")
+                    currentReminders.filter { reminder -> reminder.id != event.recurringReminder.id }
                 }
             }
-            is ReminderEvent.UpdateRecurringReminder -> {}
-            is ReminderEvent.DeleteRecurringReminder -> {}
             is ReminderEvent.MarkCompleted -> {
                 _reminders.update { currentReminders ->
                     // Create a NEW list with the updated item
@@ -94,7 +113,7 @@ class ReminderViewModel : ViewModel() {
                     // Create a NEW list with the updated item
                     currentReminders.map { reminder ->
                         if (reminder.id == event.reminderId) {
-                            Log.d(TAG, "Reminder: ${event.reminderId} updatedDue: ${event.updatedDue}")
+                            Log.d(TAG, "Snoozing Reminder: ${event.reminderId} updatedDue: ${event.updatedDue}")
                             // Use .copy() to create a new object with the isCompleted value flipped
                             reminder.copy(due = event.updatedDue)
                         } else {

@@ -42,6 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.remindermatemock.model.IntervalUnit
+import com.example.remindermatemock.model.Recurrence
+import com.example.remindermatemock.model.RecurringReminder
 import com.example.remindermatemock.model.ReminderEvent
 import com.example.remindermatemock.model.ReminderViewModel
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
@@ -73,6 +76,7 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
     val showCompleted by reminderViewModel.showCompleted.collectAsState()
     val reminders by reminderViewModel.reminders.collectAsState()
     val selectedDate by reminderViewModel.selectedDate.collectAsState()
+    var reminderToEdit by remember { mutableStateOf<RecurringReminder?>(null) }
 
     var menuExpanded by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
@@ -143,6 +147,21 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                 // This is the "event flowing up"
                 reminderViewModel.onEvent(ReminderEvent.MarkCompleted(reminderId))
             },
+            onSnoozeReminder = { reminderId, newDue ->
+                reminderViewModel.onEvent(ReminderEvent.SnoozeReminder(reminderId, newDue))
+            },
+            onDeleteReminder = { reminderId ->
+                reminderViewModel.onEvent(ReminderEvent.DeleteReminder(reminderId))
+            },
+            onUpdateReminder = { reminderId ->
+                val rem = reminders.find { it.id == reminderId }
+                if (rem != null) {
+                    reminderToEdit = RecurringReminder(rem.id, rem.name, rem.description,
+                        listOf(Recurrence(rem.due, null, 0, IntervalUnit.NONE)))
+                    showFormDialog = true
+                }
+
+            },
             modifier = Modifier
                 .padding(innerPadding)
         )
@@ -196,7 +215,7 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                 tonalElevation = 8.dp
             ) {
                 RecurringReminderForm(
-                    existingReminder = null,
+                    existingReminder = reminderToEdit,
                     onConfirm = { rec ->
                         // Logic to save or update the reminder in your ViewModel or repository
                         Log.d(TAG, "SAVING: $rec")

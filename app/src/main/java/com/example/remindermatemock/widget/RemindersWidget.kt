@@ -2,51 +2,49 @@ package com.example.remindermatemock.widget
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.remindermatemock.model.Reminder
 import com.example.remindermatemock.model.SampleData
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
+import kotlinx.datetime.LocalDateTime
 
+private const val TAG = "RemindersWidget"
 @Composable
-fun RemindersWidget(reminders: List<Reminder>,
-                    onCheckedChange: (Int) -> Unit,
-                    modifier: Modifier = Modifier) {
+fun RemindersWidget(
+    reminders: List<Reminder>,
+    onCheckedChange: (Int) -> Unit,
+    onSnoozeReminder: (id: Int, newDueTime: LocalDateTime) -> Unit,
+    onDeleteReminder: (id: Int) -> Unit,
+    onUpdateReminder: (id: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(modifier) {
-        items(reminders) { rem ->
-            ReminderItem(rem, {onCheckedChange(rem.id) })
+        items(reminders,
+            key = { rem -> rem.id }
+        ) { rem ->
+            ReminderItem(
+                reminder = rem,
+                onCheckedChange = { onCheckedChange(rem.id) },
+                onSnooze = { newDueTime -> onSnoozeReminder(rem.id, newDueTime) },
+                onDelete = { onDeleteReminder(rem.id) },
+                onUpdate = { onUpdateReminder(rem.id) }
+            )
         }
     }
 }
 
-@Composable
-fun ReminderItem(rem: Reminder, onCheckedChange: () -> Unit) {
-    val textStyle = if (rem.isCompleted) {
-        // Apply strikethrough effect when completed
-        MaterialTheme.typography.bodyLarge.copy(textDecoration = TextDecoration.LineThrough)
-    } else {
-        MaterialTheme.typography.bodyLarge
-    }
-    ListItem(
-        leadingContent = { Checkbox(checked = rem.isCompleted, onCheckedChange = {
-            onCheckedChange()
-        })},
-        headlineContent = { Text(rem.name, style = textStyle) },
-        supportingContent = if (rem.description.isEmpty()) null else ({ Text(rem.description) }),
-        trailingContent = { Text(rem.due.time.toString()) }
-    )
-}
-
 @Preview
 @Composable
-fun RemindersWidgetPreview() {
+fun RemindersWidgetPreviewWithMenu() { // Renamed for clarity
     ReminderMateMockTheme {
-        RemindersWidget(SampleData(), {})
+        RemindersWidget(
+            reminders = SampleData(),
+            onCheckedChange = {},
+            onSnoozeReminder = { id, newTime -> println("Snooze $id to $newTime") },
+            onDeleteReminder = { id -> println("Delete $id") },
+            onUpdateReminder = { id -> println("Update $id") }
+        )
     }
 }
