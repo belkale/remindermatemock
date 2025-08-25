@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
@@ -37,12 +39,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.remindermatemock.model.ReminderEvent
 import com.example.remindermatemock.model.ReminderViewModel
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
 import com.example.remindermatemock.widget.HelpDialog
 import com.example.remindermatemock.widget.MainMenu
+import com.example.remindermatemock.widget.RecurringReminderForm
 import com.example.remindermatemock.widget.RemindersWidget
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -72,6 +77,7 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
     var menuExpanded by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    var showFormDialog by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -126,7 +132,7 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(onClick = { showFormDialog = true }) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
@@ -180,12 +186,27 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
             DatePicker(state = datePickerState)
         }
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    ReminderMateMockTheme {
-        HomeScreen()
+    if (showFormDialog) {
+        // Use the Dialog composable for custom content
+        Dialog(onDismissRequest = { showFormDialog = false }) {
+            // Surface provides a background color, shape, and elevation for the dialog's content
+            Surface(
+                shape = MaterialTheme.shapes.large,
+                tonalElevation = 8.dp
+            ) {
+                RecurringReminderForm(
+                    existingReminder = null,
+                    onConfirm = { reminder ->
+                        // Logic to save or update the reminder in your ViewModel or repository
+                        Log.d(TAG, "SAVING: $reminder")
+                        showFormDialog = false
+                    },
+                    onCancel = {
+                        showFormDialog = false
+                    }
+                )
+            }
+        }
     }
 }
