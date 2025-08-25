@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.example.remindermatemock.addMinsFromNow
 import com.example.remindermatemock.model.Reminder
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
@@ -67,7 +68,7 @@ fun ReminderItem(
         supportingContent = if (reminder.description.isEmpty()) null else ({ Text(reminder.description) }),
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(reminder.due.time.toString()) // Consider formatting this better
+                Text(com.example.remindermatemock.formatTime(reminder.due.time)) // Consider formatting this better
                 Spacer(Modifier.width(4.dp))
                 Box {
                     IconButton(
@@ -83,6 +84,14 @@ fun ReminderItem(
                         expanded = isMenuExpanded,
                         onDismissRequest = { isMenuExpanded = false }
                     ) {
+                        DropdownMenuItem(
+                            text = { Text("Snooze 30 mins") },
+                            onClick = {
+                                Log.d(TAG, "Snooze 30 mins clicked for ID: ${reminder.id}") // Add log
+                                isMenuExpanded = false
+                                onSnooze(addMinsFromNow(30))
+                            }
+                        )
                         DropdownMenuItem(
                             text = { Text("Snooze (Custom)") },
                             onClick = {
@@ -118,7 +127,7 @@ fun ReminderItem(
     if (showCustomSnoozeDialog) {
         CustomDateTimePickerDialog(
             showDialog = true, // This is already true if we are in this block
-            initialDateTime = now().plus(5, DateTimeUnit.MINUTE).toLocalDateTime(TimeZone.currentSystemDefault()), // Start with the reminder's current due time
+            initialDateTime = addMinsFromNow(5), // Start with the reminder's current due time
             onDateTimeSelected = { newSnoozeDateTime ->
                 onSnooze(newSnoozeDateTime)
                 showCustomSnoozeDialog = false // Dismiss our controlling state
