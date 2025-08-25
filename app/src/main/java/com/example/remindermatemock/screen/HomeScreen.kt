@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
@@ -38,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,7 +45,6 @@ import com.example.remindermatemock.model.Recurrence
 import com.example.remindermatemock.model.RecurringReminder
 import com.example.remindermatemock.model.ReminderEvent
 import com.example.remindermatemock.model.ReminderViewModel
-import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
 import com.example.remindermatemock.widget.HelpDialog
 import com.example.remindermatemock.widget.MainMenu
 import com.example.remindermatemock.widget.RecurringReminderForm
@@ -61,7 +58,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-private const val TAG = "Home"
+private const val TAG = "HomeScreen"
 private val dateFormat = LocalDate.Format {
     day()
     char(' ')

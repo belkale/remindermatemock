@@ -37,7 +37,7 @@ fun RemindersWidget(
 
 @Preview
 @Composable
-fun RemindersWidgetPreviewWithMenu() { // Renamed for clarity
+fun RemindersWidgetPreview() { // Renamed for clarity
     ReminderMateMockTheme {
         RemindersWidget(
             reminders = SampleData(),
