@@ -197,9 +197,10 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
             ) {
                 RecurringReminderForm(
                     existingReminder = null,
-                    onConfirm = { reminder ->
+                    onConfirm = { rec ->
                         // Logic to save or update the reminder in your ViewModel or repository
-                        Log.d(TAG, "SAVING: $reminder")
+                        Log.d(TAG, "SAVING: $rec")
+                        reminderViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
                         showFormDialog = false
                     },
                     onCancel = {
