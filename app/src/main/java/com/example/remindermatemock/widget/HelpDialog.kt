@@ -15,7 +15,7 @@ fun HelpDialog(onDismiss: () -> Unit, modifier: Modifier = Modifier) {
         text = {
             Text("Here's how to use the Reminders app:\n\n" +
                     "* Add a new reminder by clicking on + at bottom right.\n" +
-                    "* Long press on a reminder for further actions.\n" +
+                    "* Click on 3 dots on right of a reminder for further actions.\n" +
                     "* Swipe left or right to go to next or previous day.\n" +
                     "* Long press on icons in bottom navigation bar to " +
                         "know their functionality.\n")

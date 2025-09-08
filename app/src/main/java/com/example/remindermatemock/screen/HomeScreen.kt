@@ -22,12 +22,16 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -115,19 +119,42 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                     horizontalArrangement = Arrangement.SpaceAround, // This is the key
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Filled.DateRange, contentDescription = "Calendar")
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = {
+                            PlainTooltip {
+                                Text("Choose a day from calendar")
+                            }
+                        },
+                        state = rememberTooltipState()
+                    ) {
+                        IconButton(onClick = { showDatePicker = true }) {
+                            Icon(Icons.Filled.DateRange, contentDescription = "Calendar")
+                        }
                     }
                     Text(selectedDate.format(dateFormat))
 
-                    IconButton(onClick = {
-                        Log.d(TAG, "showCompletedToggled: $showCompleted")
-                        reminderViewModel.onEvent(ReminderEvent.ShowCompleted)
-                    }) {
-                        if (showCompleted)
-                            Icon(Icons.Filled.Check, contentDescription = "Hide Completed")
-                        else
-                            Icon(Icons.Filled.CheckCircle, contentDescription = "Show Completed")
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = {
+                            PlainTooltip {
+                                Text("Show completed reminders")
+                            }
+                        },
+                        state = rememberTooltipState()
+                    ) {
+                        IconButton(onClick = {
+                            Log.d(TAG, "showCompletedToggled: $showCompleted")
+                            reminderViewModel.onEvent(ReminderEvent.ShowCompleted)
+                        }) {
+                            if (showCompleted)
+                                Icon(Icons.Filled.Check, contentDescription = "Hide Completed")
+                            else
+                                Icon(
+                                    Icons.Filled.CheckCircle,
+                                    contentDescription = "Show Completed"
+                                )
+                        }
                     }
                 }
             }
@@ -218,9 +245,11 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                         Log.d(TAG, "SAVING: $rec")
                         reminderViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
                         showFormDialog = false
+                        reminderToEdit = null
                     },
                     onCancel = {
                         showFormDialog = false
+                        reminderToEdit = null
                     }
                 )
             }

@@ -140,6 +140,6 @@ class ReminderViewModel : ViewModel() {
     }
 
     private fun loadSampleReminders() {
-        _reminders.value = SampleData()
+        _reminders.value = SampleData(20)
     }
 }

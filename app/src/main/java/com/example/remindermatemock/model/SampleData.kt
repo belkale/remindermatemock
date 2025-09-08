@@ -2,7 +2,7 @@ package com.example.remindermatemock.model
 
 import kotlinx.datetime.LocalDateTime
 
-fun SampleData():List<Reminder> {
+fun SampleData(targetSize: Int):List<Reminder> {
     val seedList = listOf(
         Reminder(0, "Drink 2 glasses of water", "",
             LocalDateTime(2023, 8, 23, 8, 0)),
@@ -15,6 +15,5 @@ fun SampleData():List<Reminder> {
         Reminder(0, "Exercise", "Do strength training",
             LocalDateTime(2023, 8, 23, 12, 0))
     )
-    val targetSize = 20
     return List(targetSize) { index -> seedList[index % seedList.size].copy(id = index + 1) }
 }

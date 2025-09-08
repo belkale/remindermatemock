@@ -40,7 +40,7 @@ fun RemindersWidget(
 fun RemindersWidgetPreview() { // Renamed for clarity
     ReminderMateMockTheme {
         RemindersWidget(
-            reminders = SampleData(),
+            reminders = SampleData(20),
             onCheckedChange = {},
             onSnoozeReminder = { id, newTime -> println("Snooze $id to $newTime") },
             onDeleteReminder = { id -> println("Delete $id") },
