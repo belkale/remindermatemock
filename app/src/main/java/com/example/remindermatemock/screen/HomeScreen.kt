@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.remindermatemock.model.IntervalUnit
 import com.example.remindermatemock.model.Recurrence
 import com.example.remindermatemock.model.RecurringReminder
@@ -72,7 +73,7 @@ private val dateFormat = LocalDate.Format {
 }
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
-fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
+fun HomeScreen(navController: NavController, reminderViewModel: ReminderViewModel = viewModel()) {
     // Also collect the state of the toggle itself to update the button's UI
     val showCompleted by reminderViewModel.showCompleted.collectAsState()
     val reminders by reminderViewModel.reminders.collectAsState()
@@ -98,7 +99,8 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                         }
                         MainMenu(
                             expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false }
+                            onDismissRequest = { menuExpanded = false },
+                            navController = navController
                         )
                     }
                 },
@@ -138,14 +140,14 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                         tooltip = {
                             PlainTooltip {
-                                Text("Show completed reminders")
+                                Text("Hide completed reminders")
                             }
                         },
                         state = rememberTooltipState()
                     ) {
                         IconButton(onClick = {
                             Log.d(TAG, "showCompletedToggled: $showCompleted")
-                            reminderViewModel.onEvent(ReminderEvent.ShowCompleted)
+                            reminderViewModel.showCompletedToggled()
                         }) {
                             if (showCompleted)
                                 Icon(Icons.Filled.Check, contentDescription = "Hide Completed")
@@ -216,7 +218,7 @@ fun HomeScreen(reminderViewModel: ReminderViewModel = viewModel()) {
                         if (selectedMillis != null) {
                             val date = Instant.fromEpochMilliseconds(selectedMillis)
                                 .toLocalDateTime(TimeZone.currentSystemDefault()).date
-                            reminderViewModel.onEvent(ReminderEvent.SelectDate(date))
+                            reminderViewModel.onSelectedDateChanged(date)
                         }
                         showDatePicker = false
                     }

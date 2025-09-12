@@ -5,16 +5,18 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import com.example.remindermatemock.AppDestinations
 
 @Composable
-fun MainMenu(expanded: Boolean, onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
+fun MainMenu(expanded: Boolean, navController: NavController, onDismissRequest: () -> Unit, modifier: Modifier = Modifier) {
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
         DropdownMenuItem(
             text = { Text("Overdue") },
-            onClick = { /* Do something... */ }
+            onClick = { navController.navigate(AppDestinations.OVERDUE_ROUTE) }
         )
         DropdownMenuItem(
             text = { Text("Recurrences") },
