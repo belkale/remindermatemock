@@ -14,15 +14,13 @@ sealed class ReminderEvent {
     data class SnoozeReminder(val reminderId: Int, val updatedDue: LocalDateTime): ReminderEvent()
     data class DeleteReminder(val reminderId: Int): ReminderEvent()
 
-    private fun convert(rec: RecurringReminder) = Reminder(rec.id, rec.title,
-        rec.description, rec.recurrences.first().startTime)
     fun onEvent(reminders: MutableStateFlow<List<Reminder>>) {
         when (this) {
             is AddRecurringReminder -> {
                 val rec = this.recurringReminder
                 if (rec.id == 0) { // Add
                     val id = if (reminders.value.isEmpty()) 1 else reminders.value.last().id + 1
-                    val rem = convert(rec.copy(id))
+                    val rem = rec.copy(id).convert()
                     reminders.update { currentList -> currentList + rem }
                 } else { // Update
                     reminders.update { currentReminders ->
@@ -31,7 +29,7 @@ sealed class ReminderEvent {
                             if (reminder.id == rec.id) {
                                 Log.d(TAG, "Updating Reminder: ${reminder.id}")
                                 // Use .copy() to create a new object with the isCompleted value flipped
-                                convert(rec)
+                                rec.convert()
                             } else {
                                 reminder
                             }
