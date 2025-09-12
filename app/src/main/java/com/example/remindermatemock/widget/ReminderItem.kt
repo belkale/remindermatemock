@@ -29,12 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.example.remindermatemock.addMinsFromNow
 import com.example.remindermatemock.model.Reminder
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock.System.now
 import kotlin.time.ExperimentalTime
 
 private const val TAG = "ReminderItem"
@@ -67,7 +62,7 @@ fun ReminderItem(
             )
         },
         headlineContent = { Text(reminder.name, style = textStyle) },
-        supportingContent = { if (reminder.description.isEmpty()) null else { Text(reminder.description) } },
+        supportingContent = { if (reminder.description.isNotEmpty()) Text(reminder.description) },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(com.example.remindermatemock.formatTime(reminder.due.time)) // Consider formatting this better

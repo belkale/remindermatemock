@@ -16,14 +16,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.remindermatemock.addMinsFromNow
 import com.example.remindermatemock.formatKotlinxDateTime
 import com.example.remindermatemock.model.IntervalUnit
 import com.example.remindermatemock.model.Recurrence
 import com.example.remindermatemock.model.RecurringReminder
-import com.example.remindermatemock.model.ReminderEvent
 import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
 
 private const val TAG = "RecurringReminderItem"
@@ -35,7 +33,7 @@ fun RecurringReminderItem(
     onUpdate: (rec: RecurringReminder) -> Unit,
 ) {
     var isMenuExpanded by remember(recurringReminder.id) { mutableStateOf(false) }
-    var rrToEdit by remember(recurringReminder.id) { mutableStateOf<RecurringReminder>(recurringReminder) }
+    var rrToEdit by remember(recurringReminder.id) { mutableStateOf(recurringReminder) }
     var showFormDialog by remember(recurringReminder.id) { mutableStateOf(false) }
     ListItem(
         headlineContent = { Text(text = recurringReminder.title, style = MaterialTheme.typography.bodyLarge) },
@@ -117,7 +115,7 @@ private fun formatRepeatText(interval: Int, unit: IntervalUnit): String {
 
 @Preview
 @Composable
-fun RecurringReminderItemPreview(modifier: Modifier = Modifier) {
+fun RecurringReminderItemPreview() {
     ReminderMateMockTheme {
         RecurringReminderItem(
             RecurringReminder(

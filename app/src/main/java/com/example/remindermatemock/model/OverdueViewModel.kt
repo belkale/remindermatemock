@@ -26,15 +26,6 @@ class OverdueViewModel : ViewModel() {
         loadSampleReminders()
     }
 
-    fun markCompleted(id: Int): Unit {
-        _reminders.value = _reminders.value.map { reminder ->
-            if (reminder.id == id) {
-                reminder.copy(isCompleted = true)
-            } else {
-                reminder
-            }
-        }
-    }
     // Central function to handle all UI events
     fun onEvent(event: ReminderEvent) {
         event.onEvent(_reminders)

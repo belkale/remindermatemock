@@ -81,7 +81,7 @@ fun CustomDateTimePickerDialog(
                     val newSelectedDateTime = LocalDateTime(date, LocalTime(hourOfDay, minute))
 
                     // Ensure selected time is in the future
-                    if (newSelectedDateTime.toInstant(TimeZone.currentSystemDefault()) > kotlin.time.Clock.System.now()) {
+                    if (newSelectedDateTime.toInstant(TimeZone.currentSystemDefault()) > Clock.System.now()) {
                         onDateTimeSelected(newSelectedDateTime)
                     } else {
                         Toast.makeText(context, "Cannot select a time in the past", Toast.LENGTH_SHORT).show()
