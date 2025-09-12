@@ -40,10 +40,7 @@ fun RecurringRemindersWidget(
         ) {
             items(recurringReminders, key = { it.id }) { rr ->
                 RecurringReminderItem(recurringReminder = rr,
-                    onDelete = {
-                        Log.d(TAG, "Delete clicked for ID: ${rr.id}")
-                        onDelete(rr.id)
-                               },
+                    onDelete = { onDelete(rr.id) },
                     onUpdate = onUpdate)
             }
         }
