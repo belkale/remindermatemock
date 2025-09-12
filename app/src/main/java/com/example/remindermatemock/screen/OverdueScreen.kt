@@ -20,8 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.remindermatemock.model.IntervalUnit
@@ -29,7 +27,7 @@ import com.example.remindermatemock.model.OverdueViewModel
 import com.example.remindermatemock.model.Recurrence
 import com.example.remindermatemock.model.RecurringReminder
 import com.example.remindermatemock.model.ReminderEvent
-import com.example.remindermatemock.widget.RecurringReminderForm
+import com.example.remindermatemock.widget.RecurringReminderFormDialog
 import com.example.remindermatemock.widget.RemindersWidget
 
 private const val TAG = "OverdueScreen"
@@ -94,28 +92,19 @@ fun OverdueScreen(
     }
 
     if (showFormDialog) {
-        // Use the Dialog composable for custom content
-        Dialog(onDismissRequest = { showFormDialog = false }) {
-            // Surface provides a background color, shape, and elevation for the dialog's content
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                tonalElevation = 8.dp
-            ) {
-                RecurringReminderForm(
-                    existingReminder = reminderToEdit,
-                    onConfirm = { rec ->
-                        // Logic to save or update the reminder in your ViewModel or repository
-                        Log.d(TAG, "SAVING: $rec")
-                        overdueViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
-                        showFormDialog = false
-                        reminderToEdit = null
-                    },
-                    onCancel = {
-                        showFormDialog = false
-                        reminderToEdit = null
-                    }
-                )
+        RecurringReminderFormDialog(reminderToEdit,
+            onDismissRequest = { showFormDialog = false },
+            onConfirm = { rec ->
+                // Logic to save or update the reminder in your ViewModel or repository
+                Log.d(TAG, "SAVING: $rec")
+                overdueViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
+                showFormDialog = false
+                reminderToEdit = null
+            },
+            onCancel = {
+                showFormDialog = false
+                reminderToEdit = null
             }
-        }
+        )
     }
 }

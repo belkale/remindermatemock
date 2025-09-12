@@ -53,6 +53,7 @@ import com.example.remindermatemock.model.HomeViewModel
 import com.example.remindermatemock.widget.HelpDialog
 import com.example.remindermatemock.widget.MainMenu
 import com.example.remindermatemock.widget.RecurringReminderForm
+import com.example.remindermatemock.widget.RecurringReminderFormDialog
 import com.example.remindermatemock.widget.RemindersWidget
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -233,28 +234,19 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
     }
 
     if (showFormDialog) {
-        // Use the Dialog composable for custom content
-        Dialog(onDismissRequest = { showFormDialog = false }) {
-            // Surface provides a background color, shape, and elevation for the dialog's content
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                tonalElevation = 8.dp
-            ) {
-                RecurringReminderForm(
-                    existingReminder = reminderToEdit,
-                    onConfirm = { rec ->
-                        // Logic to save or update the reminder in your ViewModel or repository
-                        Log.d(TAG, "SAVING: $rec")
-                        homeViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
-                        showFormDialog = false
-                        reminderToEdit = null
-                    },
-                    onCancel = {
-                        showFormDialog = false
-                        reminderToEdit = null
-                    }
-                )
+        RecurringReminderFormDialog(reminderToEdit,
+            onDismissRequest = { showFormDialog = false },
+            onConfirm = { rec ->
+                // Logic to save or update the reminder in your ViewModel or repository
+                Log.d(TAG, "SAVING: $rec")
+                homeViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
+                showFormDialog = false
+                reminderToEdit = null
+            },
+            onCancel = {
+                showFormDialog = false
+                reminderToEdit = null
             }
-        }
+        )
     }
 }
