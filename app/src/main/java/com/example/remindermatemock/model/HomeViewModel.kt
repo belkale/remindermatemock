@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
@@ -19,7 +18,7 @@ import kotlin.time.ExperimentalTime
 
 private const val TAG = "ReminderViewModel"
 
-class ReminderViewModel : ViewModel() {
+class HomeViewModel : ViewModel() {
 
     // Source of truth for the filter state
     private val _showCompleted = MutableStateFlow(true) // Default to hiding completed

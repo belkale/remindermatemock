@@ -49,7 +49,7 @@ import com.example.remindermatemock.model.IntervalUnit
 import com.example.remindermatemock.model.Recurrence
 import com.example.remindermatemock.model.RecurringReminder
 import com.example.remindermatemock.model.ReminderEvent
-import com.example.remindermatemock.model.ReminderViewModel
+import com.example.remindermatemock.model.HomeViewModel
 import com.example.remindermatemock.widget.HelpDialog
 import com.example.remindermatemock.widget.MainMenu
 import com.example.remindermatemock.widget.RecurringReminderForm
@@ -73,11 +73,11 @@ private val dateFormat = LocalDate.Format {
 }
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
-fun HomeScreen(navController: NavController, reminderViewModel: ReminderViewModel = viewModel()) {
+fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = viewModel()) {
     // Also collect the state of the toggle itself to update the button's UI
-    val showCompleted by reminderViewModel.showCompleted.collectAsState()
-    val reminders by reminderViewModel.reminders.collectAsState()
-    val selectedDate by reminderViewModel.selectedDate.collectAsState()
+    val showCompleted by homeViewModel.showCompleted.collectAsState()
+    val reminders by homeViewModel.reminders.collectAsState()
+    val selectedDate by homeViewModel.selectedDate.collectAsState()
     var reminderToEdit by remember { mutableStateOf<RecurringReminder?>(null) }
 
     var menuExpanded by remember { mutableStateOf(false) }
@@ -147,7 +147,7 @@ fun HomeScreen(navController: NavController, reminderViewModel: ReminderViewMode
                     ) {
                         IconButton(onClick = {
                             Log.d(TAG, "showCompletedToggled: $showCompleted")
-                            reminderViewModel.showCompletedToggled()
+                            homeViewModel.showCompletedToggled()
                         }) {
                             if (showCompleted)
                                 Icon(Icons.Filled.Check, contentDescription = "Hide Completed")
@@ -171,13 +171,13 @@ fun HomeScreen(navController: NavController, reminderViewModel: ReminderViewMode
             reminders,
             onCheckedChange = { reminderId ->
                 // This is the "event flowing up"
-                reminderViewModel.onEvent(ReminderEvent.MarkCompleted(reminderId))
+                homeViewModel.onEvent(ReminderEvent.MarkCompleted(reminderId))
             },
             onSnoozeReminder = { reminderId, newDue ->
-                reminderViewModel.onEvent(ReminderEvent.SnoozeReminder(reminderId, newDue))
+                homeViewModel.onEvent(ReminderEvent.SnoozeReminder(reminderId, newDue))
             },
             onDeleteReminder = { reminderId ->
-                reminderViewModel.onEvent(ReminderEvent.DeleteReminder(reminderId))
+                homeViewModel.onEvent(ReminderEvent.DeleteReminder(reminderId))
             },
             onUpdateReminder = { reminderId ->
                 val rem = reminders.find { it.id == reminderId }
@@ -218,7 +218,7 @@ fun HomeScreen(navController: NavController, reminderViewModel: ReminderViewMode
                         if (selectedMillis != null) {
                             val date = Instant.fromEpochMilliseconds(selectedMillis)
                                 .toLocalDateTime(TimeZone.currentSystemDefault()).date
-                            reminderViewModel.onSelectedDateChanged(date)
+                            homeViewModel.onSelectedDateChanged(date)
                         }
                         showDatePicker = false
                     }
@@ -245,7 +245,7 @@ fun HomeScreen(navController: NavController, reminderViewModel: ReminderViewMode
                     onConfirm = { rec ->
                         // Logic to save or update the reminder in your ViewModel or repository
                         Log.d(TAG, "SAVING: $rec")
-                        reminderViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
+                        homeViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
                         showFormDialog = false
                         reminderToEdit = null
                     },

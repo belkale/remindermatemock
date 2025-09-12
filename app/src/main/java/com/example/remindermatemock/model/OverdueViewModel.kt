@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlin.collections.filter
 
-class OverdueModel : ViewModel() {
+class OverdueViewModel : ViewModel() {
     private val _reminders = MutableStateFlow<List<Reminder>>(emptyList())
     val overdueIncompleteReminders: StateFlow<List<Reminder>> = _reminders
         .map { remindersList ->

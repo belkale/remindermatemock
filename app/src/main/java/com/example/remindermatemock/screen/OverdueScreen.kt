@@ -25,7 +25,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.remindermatemock.model.IntervalUnit
-import com.example.remindermatemock.model.OverdueModel
+import com.example.remindermatemock.model.OverdueViewModel
 import com.example.remindermatemock.model.Recurrence
 import com.example.remindermatemock.model.RecurringReminder
 import com.example.remindermatemock.model.ReminderEvent
@@ -38,9 +38,9 @@ private const val TAG = "OverdueScreen"
 @Composable
 fun OverdueScreen(
     navController: NavController, // Use the actual NavController
-    overdueModel: OverdueModel = viewModel()
+    overdueViewModel: OverdueViewModel = viewModel()
 ) {
-    val overdueReminders by overdueModel.overdueIncompleteReminders.collectAsState()
+    val overdueReminders by overdueViewModel.overdueIncompleteReminders.collectAsState()
     var reminderToEdit by remember { mutableStateOf<RecurringReminder?>(null) }
     var showFormDialog by remember { mutableStateOf(false) }
 
@@ -71,13 +71,13 @@ fun OverdueScreen(
             overdueReminders,
             onCheckedChange = { reminderId ->
                 // This is the "event flowing up"
-                overdueModel.onEvent(ReminderEvent.MarkCompleted(reminderId))
+                overdueViewModel.onEvent(ReminderEvent.MarkCompleted(reminderId))
             },
             onSnoozeReminder = { reminderId, newDue ->
-                overdueModel.onEvent(ReminderEvent.SnoozeReminder(reminderId, newDue))
+                overdueViewModel.onEvent(ReminderEvent.SnoozeReminder(reminderId, newDue))
             },
             onDeleteReminder = { reminderId ->
-                overdueModel.onEvent(ReminderEvent.DeleteReminder(reminderId))
+                overdueViewModel.onEvent(ReminderEvent.DeleteReminder(reminderId))
             },
             onUpdateReminder = { reminderId ->
                 val rem = overdueReminders.find { it.id == reminderId }
@@ -106,7 +106,7 @@ fun OverdueScreen(
                     onConfirm = { rec ->
                         // Logic to save or update the reminder in your ViewModel or repository
                         Log.d(TAG, "SAVING: $rec")
-                        overdueModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
+                        overdueViewModel.onEvent(ReminderEvent.AddRecurringReminder(rec))
                         showFormDialog = false
                         reminderToEdit = null
                     },
