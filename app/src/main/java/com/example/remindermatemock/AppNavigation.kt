@@ -7,11 +7,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.remindermatemock.screen.HomeScreen // Assuming HomeScreen exists
 import com.example.remindermatemock.screen.OverdueScreen
+import com.example.remindermatemock.screen.RecurringRemindersScreen
+
 // Import other screens as you create them
 
 object AppDestinations {
     const val HOME_ROUTE = "home"
     const val OVERDUE_ROUTE = "overdue"
+
+    const val RECURRING_REMINDERS_ROUTE = "recurring_reminders"
 }
 
 /**
@@ -35,6 +39,10 @@ fun AppNavigation() {
             OverdueScreen(navController = navController)
         }
 
+        composable(AppDestinations.RECURRING_REMINDERS_ROUTE) {
+            // Pass the navController to OverdueScreen for its back navigation
+            RecurringRemindersScreen(navController = navController)
+        }
         // Add other composable routes here:
         // composable(AppDestinations.SETTINGS_ROUTE) {
         //     SettingsScreen(navController = navController)

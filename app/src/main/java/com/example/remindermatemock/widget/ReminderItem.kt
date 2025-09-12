@@ -24,9 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.remindermatemock.addMinsFromNow
 import com.example.remindermatemock.model.Reminder
+import com.example.remindermatemock.ui.theme.ReminderMateMockTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -65,7 +67,7 @@ fun ReminderItem(
             )
         },
         headlineContent = { Text(reminder.name, style = textStyle) },
-        supportingContent = if (reminder.description.isEmpty()) null else ({ Text(reminder.description) }),
+        supportingContent = { if (reminder.description.isEmpty()) null else { Text(reminder.description) } },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(com.example.remindermatemock.formatTime(reminder.due.time)) // Consider formatting this better
@@ -73,7 +75,6 @@ fun ReminderItem(
                 Box {
                     IconButton(
                         onClick = { isMenuExpanded = true },
-                        // modifier = Modifier.menuAnchor(type = MenuAnchorType.Primary)
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
@@ -136,5 +137,17 @@ fun ReminderItem(
                 showCustomSnoozeDialog = false // Dismiss our controlling state
             }
         )
+    }
+}
+
+@Preview
+@Composable
+fun ReminderItemPreview() {
+    ReminderMateMockTheme {
+        ReminderItem(
+            Reminder(1, "Take the dog for walk",
+                "Go around the apartment at 6 pm",
+                addMinsFromNow(10),false),
+            onCheckedChange = {},onSnooze = {},onDelete = {},onUpdate = {})
     }
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -72,6 +73,7 @@ private val dateFormat = LocalDate.Format {
     chars(", ")                            // ", "
     year()                                 // "2025"
 }
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = viewModel()) {
@@ -168,6 +170,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
             }
         }
     ) { innerPadding ->
+
         RemindersWidget(
             reminders,
             onCheckedChange = { reminderId ->
@@ -183,8 +186,10 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
             onUpdateReminder = { reminderId ->
                 val rem = reminders.find { it.id == reminderId }
                 if (rem != null) {
-                    reminderToEdit = RecurringReminder(rem.id, rem.name, rem.description,
-                        listOf(Recurrence(rem.due, null, 0, IntervalUnit.NONE)))
+                    reminderToEdit = RecurringReminder(
+                        rem.id, rem.name, rem.description,
+                        listOf(Recurrence(rem.due, null, 0, IntervalUnit.NONE))
+                    )
                     showFormDialog = true
                 }
 
@@ -192,6 +197,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
             modifier = Modifier
                 .padding(innerPadding)
         )
+
     }
     // This part of the code will only run (compose) when showHelpDialog is true.
     if (showHelpDialog) {
@@ -234,7 +240,8 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
     }
 
     if (showFormDialog) {
-        RecurringReminderFormDialog(reminderToEdit,
+        RecurringReminderFormDialog(
+            reminderToEdit,
             onDismissRequest = { showFormDialog = false },
             onConfirm = { rec ->
                 // Logic to save or update the reminder in your ViewModel or repository

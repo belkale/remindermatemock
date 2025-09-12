@@ -9,7 +9,7 @@ private const val TAG = "ReminderEvent"
 
 sealed class ReminderEvent {
     data class AddRecurringReminder(val recurringReminder: RecurringReminder): ReminderEvent()
-    data class DeleteRecurringReminder(val recurringReminder: RecurringReminder): ReminderEvent()
+    data class DeleteRecurringReminder(val rrId: Int): ReminderEvent()
     data class MarkCompleted(val reminderId: Int): ReminderEvent()
     data class SnoozeReminder(val reminderId: Int, val updatedDue: LocalDateTime): ReminderEvent()
     data class DeleteReminder(val reminderId: Int): ReminderEvent()
@@ -40,8 +40,8 @@ sealed class ReminderEvent {
             }
             is DeleteRecurringReminder -> {
                 reminders.update { currentReminders ->
-                    Log.d(TAG, "Reminder: Deleting reminder ${this.recurringReminder.id}")
-                    currentReminders.filter { reminder -> reminder.id != this.recurringReminder.id }
+                    Log.d(TAG, "Reminder: Deleting reminder ${this.rrId}")
+                    currentReminders.filter { reminder -> reminder.id != this.rrId }
                 }
             }
             is MarkCompleted -> {
@@ -78,6 +78,41 @@ sealed class ReminderEvent {
                     currentReminders.filter { reminder -> reminder.id != this.reminderId }
                 }
             }
+        }
+    }
+
+    fun onRecurringReminderEvent(recurringReminders: MutableStateFlow<List<RecurringReminder>>) {
+        Log.d(TAG, "RecurringReminderEvent: $this")
+        when (this) {
+            is AddRecurringReminder -> {
+                val rec = this.recurringReminder
+                if (rec.id == 0) { // Add
+                    val id = if (recurringReminders.value.isEmpty()) 1 else recurringReminders.value.last().id + 1
+                    recurringReminders.update { currentList -> currentList + recurringReminder.copy(id = id) }
+                } else { // Update
+                    recurringReminders.update { currentList ->
+                        // Create a NEW list with the updated item
+                        currentList.map { rr ->
+                            if (rr.id == rec.id) {
+                                Log.d(TAG, "Updating recurring reminder: ${rr.id}")
+                                rec
+                            } else {
+                                rr
+                            }
+                        }
+                    }
+                }
+
+            }
+            is DeleteRecurringReminder -> {
+                recurringReminders.update { currentList ->
+                    Log.d(TAG, "Deleting recurring reminder ${this.rrId}")
+                    currentList.filter { rr -> rr.id != this.rrId}
+                }
+            }
+            is MarkCompleted -> { }
+            is SnoozeReminder -> { }
+            is DeleteReminder -> { }
         }
     }
 }

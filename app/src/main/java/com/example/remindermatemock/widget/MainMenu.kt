@@ -20,7 +20,7 @@ fun MainMenu(expanded: Boolean, navController: NavController, onDismissRequest: 
         )
         DropdownMenuItem(
             text = { Text("Recurrences") },
-            onClick = { /* Do something... */ }
+            onClick = { navController.navigate(AppDestinations.RECURRING_REMINDERS_ROUTE) }
         )
         DropdownMenuItem(
             text = { Text("Settings") },
